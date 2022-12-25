@@ -114,10 +114,12 @@ class DeleteBookCopyView(APIView):
             return Response({'detail': "Недостаточно прав (авторизуйтесь под работником библиотеки)"''})
 
         cypher = kwargs.get('cypher')
-        queryset = get_object_or_404(BookCopy, book__cypher=cypher)
-        print(dir(queryset))
-        response = {'detail': {'book': queryset.book.title, 'cypher': cypher}}
+        queryset = BookCopy.objects.filter(book__cypher=cypher)
+
+        get_object_or_404(Book, cypher=cypher)
+        response = {'detail': {'book': [str(book_copy) for book_copy in queryset], 'cypher': cypher}}
         queryset.delete()
+        Book.objects.get(cypher=cypher).delete()
         return Response(response)
 
 

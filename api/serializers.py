@@ -32,7 +32,7 @@ class ReaderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'phone', 'library_card_number', 'reader_room', 'register_date')
+        fields = ('username', 'password', 'phone', 'library_card_number', 'reader_room', 'register_date', 'education', 'is_have_degree')
 
 
 class AuthorSerializer(serializers.ModelSerializer):

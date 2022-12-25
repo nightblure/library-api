@@ -34,7 +34,9 @@ urlpatterns = [
         #     "password": "reader",
         #     "phone": "892342511",
         #     "library_card_number": "2345",
-        #     "reader_room": 1
+        #     "education": 1,
+        #     "reader_room": 1,
+        #     "is_have_degree": True,
         # }
     path(f'{API_PREFIX}/reader-register/', CreateReaderView.as_view()),
     path(f'{API_PREFIX}/author-register/', CreateAuthorView.as_view()),
@@ -60,10 +62,10 @@ urlpatterns = [
     # URL: http://127.0.0.1:8000/api/v1/lib-reader-register/admin/
     # METHOD: PATCH/PUT
     # BODY EXAMPLE:
-        # {
-        #     "library_card_number": "1235666",
-        #     "reader_room": 1
-        # }
+    # {
+    #     "library_card_number": "1235666",
+    #     "reader_room": 1
+    # }
     path(f'{API_PREFIX}/lib-reader-register/<str:username>/', RegisterReaderView.as_view()),
 
     # Удалить пользователей, зарегистрированных в библиотеке более года назад
@@ -74,16 +76,14 @@ urlpatterns = [
 
     # Принять книгу в фонд библиотеки (POST-запрос)
     # BODY EXAMPLE:
-        # {
-        #     "title": "Приключения Тома Сойера",
-        #     "year": 2001,
-        #     "cypher": "ISBNXXX",
-        #     "reading_room": [1] (это поле можно убрать)
-        # }
+    # {
+    #     "title": "Приключения Тома Сойера",
+    #     "year": 2001,
+    #     "cypher": "ISBNXXX",
+    #     "reading_room": [1] (это поле можно убрать)
+    # }
     path(f'{API_PREFIX}/book-register/', BookRegisterView.as_view()),
 
     # Отчет (http://127.0.0.1:8000/api/v1/report/?month=1/)
     path(f'{API_PREFIX}/report/', ReportView.as_view())
 ]
-
-
