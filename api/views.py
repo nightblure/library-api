@@ -1,6 +1,8 @@
+import json
 from collections import defaultdict
 from datetime import datetime
 
+from django.forms.models import model_to_dict
 from dateutil.relativedelta import relativedelta
 from django.db.models import F, Count, Sum, Q
 from django.db.models.functions import Extract, Now
@@ -270,9 +272,11 @@ class ReturnBookView(APIView):
 class GetUserInfoView(APIView):
     def get(self, request, **kwargs):
         user = get_object_or_404(User, username=kwargs['username'])
+        user_obj = model_to_dict(user)
         restricted = ['id', 'password', 'date_joined', '_state',
                       'surname', 'lastname', 'role',
                       'is_staff', 'is_active', 'last_login',
                       'is_superuser', 'groups', 'user_permissions',
                       'reader_room', 'education', 'first_name', 'last_name']
-        return Response({'detail': [f'{key}: {user.__dict__[key]}' for key in user.__dict__ if key not in restricted]})
+        return Response({'detail': user_obj})
+    # [f'{key}: {user.__dict__[key]}' for key in user.__dict__ if key not in restricted]
