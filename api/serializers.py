@@ -82,3 +82,11 @@ class BookSerializer(serializers.ModelSerializer):
     #     return book
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        exclude = ['id', 'password', 'date_joined',
+                   'surname', 'lastname', 'role',
+                   'is_staff', 'is_active', 'last_login',
+                   'is_superuser', 'groups', 'user_permissions',
+                   'reader_room', 'education', 'first_name', 'last_name']

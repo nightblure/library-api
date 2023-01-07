@@ -210,3 +210,56 @@ class ReportView(APIView):
             }
 
         return Response(response)
+
+
+class EditUserView(generics.UpdateAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    lookup_url_kwarg = 'username'
+    lookup_field = 'username'
+
+
+class BooksCopiesView(generics.ListAPIView):
+    queryset = BookCopy.objects.all()
+    serializer_class = BookCopySerializer
+
+
+class GetBookView(APIView):
+    def post(self, request, **kwargs):
+        username = kwargs['username']
+        user = get_object_or_404(User, username=username)
+        data = request.data
+        book_title = data['book']
+
+        if BookCopy.objects.filter(reader__username=username, book__title=book_title).exists():
+            return Response({'detail': f'Пользователь {username} уже взял книгу {book_title}'})
+
+        book_copy = BookCopy.objects.filter(Q(book__title=book_title) & Q(reader__isnull=True))
+
+        if not book_copy:
+            return Response({'detail': f'Нет свободных экземпляров книги {book_title} или такой книги не существует'})
+
+        book_copy = book_copy.first()
+        book_copy.reader = user
+        book_copy.save()
+        return Response({'detail': f'Пользователь {username} взял книгу {book_title}'})
+
+
+class ReturnBookView(APIView):
+    def post(self, request, **kwargs):
+        username = kwargs['username']
+        user = get_object_or_404(User, username=username)
+        data = request.data
+        book_title = data['book']
+
+        if not BookCopy.objects.filter(reader__username=username, book__title=book_title).exists():
+            return Response({'detail': f'Пользователь {username} не может вернуть книгу {book_title}, т.к. ранее не брал ее'})
+
+        book_copy = BookCopy.objects.get(Q(book__title=book_title) & Q(reader=user))
+
+        if not book_copy:
+            return Response({'detail': f'Книги {book_title} не существует, либо эта книга не взята пользователем {username}'})
+
+        book_copy.reader = None
+        book_copy.save()
+        return Response({'detail': f'Пользователь {username} вернул книгу {book_title}'})
