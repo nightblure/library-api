@@ -109,4 +109,7 @@ urlpatterns = [
 
     # Все экземпляры книг (GET method)
     path(f'{API_PREFIX}/books-copies/', BooksCopiesView.as_view()),
+
+    # Получить информацию по пользователю
+    path(f'{API_PREFIX}/get-user-info/<str:username>/', GetUserInfoView.as_view())
 ]

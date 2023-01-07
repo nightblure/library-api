@@ -253,13 +253,26 @@ class ReturnBookView(APIView):
         book_title = data['book']
 
         if not BookCopy.objects.filter(reader__username=username, book__title=book_title).exists():
-            return Response({'detail': f'Пользователь {username} не может вернуть книгу {book_title}, т.к. ранее не брал ее'})
+            return Response(
+                {'detail': f'Пользователь {username} не может вернуть книгу {book_title}, т.к. ранее не брал ее'})
 
         book_copy = BookCopy.objects.get(Q(book__title=book_title) & Q(reader=user))
 
         if not book_copy:
-            return Response({'detail': f'Книги {book_title} не существует, либо эта книга не взята пользователем {username}'})
+            return Response(
+                {'detail': f'Книги {book_title} не существует, либо эта книга не взята пользователем {username}'})
 
         book_copy.reader = None
         book_copy.save()
         return Response({'detail': f'Пользователь {username} вернул книгу {book_title}'})
+
+
+class GetUserInfoView(APIView):
+    def get(self, request, **kwargs):
+        user = get_object_or_404(User, username=kwargs['username'])
+        restricted = ['id', 'password', 'date_joined', '_state',
+                      'surname', 'lastname', 'role',
+                      'is_staff', 'is_active', 'last_login',
+                      'is_superuser', 'groups', 'user_permissions',
+                      'reader_room', 'education', 'first_name', 'last_name']
+        return Response({'detail': [f'{key}: {user.__dict__[key]}' for key in user.__dict__ if key not in restricted]})
