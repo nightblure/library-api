@@ -8,6 +8,7 @@ from django.db.models import F, Count, Sum, Q
 from django.db.models.functions import Extract, Now
 from rest_framework import generics, serializers, permissions, mixins
 from rest_framework.generics import get_object_or_404, RetrieveUpdateAPIView, GenericAPIView
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -22,10 +23,12 @@ class CreateUserView:
 
 class CreateReaderView(CreateUserView, generics.CreateAPIView):
     serializer_class = ReaderSerializer
+    permission_classes = [AllowAny]
 
 
 class CreateAuthorView(CreateUserView, generics.CreateAPIView):
     serializer_class = AuthorSerializer
+    permission_classes = [AllowAny]
 
 
 class ReaderBooksView(generics.ListAPIView):
